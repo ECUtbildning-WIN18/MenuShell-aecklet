@@ -4,7 +4,7 @@ using System.Text;
 
 namespace genomgång_Menushell.Domain
 {
-    class User
+    public class User
     {
         public string Username { get; set; }
         public string Password { get; set; }

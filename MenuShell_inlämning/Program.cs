@@ -4,32 +4,40 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using genomgång_Menushell.Domain;
+using MenuShell_inlämning.Domain;
 
 namespace genomgång_Menushell
 {
     class Program
     {
+        const string administrator = "Administrator";
+        const string receptionist = "Receptionist";
+        const string veterinarian = "Veterinarian";
+
+        public static Dictionary<string, User> Users = new Dictionary<string, User>();
+        //{
+        //    {"admin", new User("admin", "8008135", administrator)},
+        //    {"jake", new User("user", "8008135", receptionist)},
+        //    {"john", new User("user","8008135", veterinarian)},
+        //    {"jane", new User("user","8008135", "")}
+        //};
+
         static void Main(string[] args)
         {
             logout:
 
-            bool notLoggedIn = true;
-
-            const string administrator = "Administrator";
-            const string receptionist = "Receptionist";
-            const string veterinarian = "Veterinarian";
+            bool notLoggedIn = true;            
 
             var admin = new User("admin", "secret", "Administrator");
 
-            var users = new Dictionary<string, User>
-            {
-                {"admin", new User("admin", "8008135", administrator)},
-                {"hacker", new User("user", "8008135", receptionist)},
-                {"john", new User("user","8008135", veterinarian)},
-                {"jane", new User("user","8008135", "")}
-            };
+            var search = new UserSearchView();
+            var delete = new UserListView();           
 
             User user = null;
+
+            Users.Add("admin", new User("admin", "8008135", administrator));
+            Users.Add("jake", new User("user", "8008135", receptionist));
+            Users.Add("john", new User("user", "8008135", veterinarian));
 
             do
             {
@@ -47,9 +55,9 @@ namespace genomgång_Menushell
 
                 if (answer == ConsoleKey.Y)
                 {
-                    if (users.ContainsKey(username) && users[username].Password == password)
+                    if (Users.ContainsKey(username) && Users[username].Password == password)
                     {
-                        user = users[username];
+                        user = Users[username];
                         notLoggedIn = false;
                     }
                     else
@@ -95,13 +103,13 @@ namespace genomgång_Menushell
                         switch (answer)
                         {
                             case ConsoleKey.D1:
-                                users.Add(username, new User(username, password, administrator));
+                                Users.Add(username, new User(username, password, administrator));
                                 break;
                             case ConsoleKey.D2:
-                                users.Add(username, new User(username, password, receptionist));
+                                Users.Add(username, new User(username, password, receptionist));
                                 break;
                             case ConsoleKey.D3:
-                                users.Add(username, new User(username, password, veterinarian));
+                                Users.Add(username, new User(username, password, veterinarian));
                                 break;
                         }
 
@@ -109,46 +117,88 @@ namespace genomgång_Menushell
 
                         Console.ReadKey();
 
-
                         goto Start;
 
                     case ConsoleKey.D2:
 
                         Console.Clear();
 
-                        users.ToList().ForEach(x => Console.WriteLine(x.Key));
+                        var searchResult = search.Display(Users);
 
-                        Console.WriteLine("\nPress any key to return to previous menu.");
+                        delete.Display(searchResult);
 
-                        Console.ReadKey();
+
+                        //    Console.WriteLine("Search by username:");
+
+                        //    string input = Console.ReadLine();                       
+
+                        //    var searchResult = users.Keys.Where(key => key.Contains(input));
+
+                        //    Console.Clear();                       
+
+                        //    Console.WriteLine("Results:");
+
+                        //    foreach (var name in searchResult)
+                        //    {
+                        //         Console.WriteLine(name);
+                        //    }
+
+                        //    Console.Write("\n(D)elete");
+
+                        //    var delete = Console.ReadKey(true).Key;
+
+                        //    if (delete == ConsoleKey.D)
+                        //    {
+                        //        Console.Clear();
+
+                        //        foreach (var name in searchResult)
+                        //        {
+                        //            Console.WriteLine(name);
+                        //        }
+
+                        //        Console.Write("\nDelete: ");
+
+                        //        var deleteInput = Console.ReadLine();
+
+                        //        Console.Write("(Y)es (N)o ");
+
+                        //        var Yes = Console.ReadKey(true).Key;
+
+                        //        if (Yes == ConsoleKey.Y)
+                        //        {
+                        //            users.Remove(deleteInput);
+                        //        }                      
+                        //    }
+
+                        //users.ToList().ForEach(x => Console.WriteLine(x.Key));
+
+                        //Console.WriteLine("\nPress any key to return to previous menu.");                        
 
                         goto Start;
 
-                    case ConsoleKey.D3:
+                    //case ConsoleKey.D3:
 
-                        Console.Clear();
+                    //    Console.Clear();
 
-                        users.ToList().ForEach(x => Console.WriteLine(x.Key));
+                    //    users.ToList().ForEach(x => Console.WriteLine(x.Key));
 
-                        Console.WriteLine("\nEnter name of the user you wish to delete.");
+                    //    Console.WriteLine("\nEnter name of the user you wish to delete.");
 
-                        users.Remove(Console.ReadLine());
+                    //    users.Remove(Console.ReadLine());
 
-                        Console.Clear();
+                    //    Console.Clear();
 
-                        users.ToList().ForEach(x => Console.WriteLine(x.Key));
+                    //    users.ToList().ForEach(x => Console.WriteLine(x.Key));
 
-                        Console.WriteLine("\nPress any key to return to previous menu.");
+                    //    Console.WriteLine("\nPress any key to return to previous menu.");
 
-                        Console.ReadKey();
+                    //    Console.ReadKey();
 
-                        goto Start;
+                    //goto Start;
 
                     case ConsoleKey.D4:
 
                         goto logout;
-
-
                 }
             }
             else if (user.Role == receptionist)
@@ -194,8 +244,8 @@ namespace genomgång_Menushell
         {
             //admin
             Console.WriteLine("1. Add user");
-            Console.WriteLine("2. List users");
-            Console.WriteLine("3. Remove user");
+            Console.WriteLine("2. Search users");
+            //Console.WriteLine("3. Remove user");
             Console.WriteLine("4. Exit");
         }
         static void ShowReceptionistAre()
@@ -204,8 +254,6 @@ namespace genomgång_Menushell
             Console.WriteLine("1. Register customer");
             Console.WriteLine("2. Make appointment");
             Console.WriteLine("3. Exit");
-
-
         }
 
         static void ShowVeterinarianArea()
@@ -213,8 +261,6 @@ namespace genomgång_Menushell
             //vetrinarian
             Console.WriteLine("1. List appointment");
             Console.WriteLine("2. Exit");
-
-
         }
     }
 }
