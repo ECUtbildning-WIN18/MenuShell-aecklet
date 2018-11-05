@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace genomgång_Menushell.Domain
+﻿namespace genomgång_Menushell.Domain
 {
     public class User
     {
@@ -15,6 +11,11 @@ namespace genomgång_Menushell.Domain
             Username = username;
             Password = password;
             Role = role;
+        }
+
+        public User()
+        {
+
         }
     }
 }

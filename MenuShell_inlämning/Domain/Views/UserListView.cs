@@ -1,13 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using genomgång_Menushell.Domain;
-using genomgång_Menushell;
+
 
 namespace MenuShell_inlämning.Domain
 {
+
     class UserListView
     {
-        /// <inheritdoc />
+        //public List<User>
+        //    public static void Connection()
+        //{
+        //    string connectionString = "Data Source=(local);Initial Catalog=MenuShell;Integrated Security=true";
+
+        //    using (var Connection = new SqlConnection(connectionString))
+        //    {
+        //        Connection.Open();
+        //    }
+        //}
+
         public void Display(IEnumerable<string> searchResult)
         {
 
@@ -30,9 +43,9 @@ namespace MenuShell_inlämning.Domain
 
                 Console.Write("(Y)es (N)o ");
 
-                var Yes = Console.ReadKey(true).Key;
+                var yes = Console.ReadKey(true).Key;
 
-                if (Yes == ConsoleKey.Y)
+                if (yes == ConsoleKey.Y)
                 {
                     Program.Users.Remove(deleteInput);
                     //users.Remove(deleteInput);

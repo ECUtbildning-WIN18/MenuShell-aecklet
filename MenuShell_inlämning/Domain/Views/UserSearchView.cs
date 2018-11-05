@@ -7,7 +7,7 @@ namespace MenuShell_inlämning.Domain
 {
     class UserSearchView
     {
-        public static IEnumerable<string> searchResult;
+        public static IEnumerable<string> SearchResult;
         
         public IEnumerable<string> Display (Dictionary<string, User> users)
         {
@@ -16,18 +16,20 @@ namespace MenuShell_inlämning.Domain
 
             string input = Console.ReadLine();
 
-            searchResult = users.Keys.Where(key => key.Contains(input));
+            var getallusers = new GetUser();
 
             Console.Clear();
 
             Console.Write("Results: \n");
 
-            foreach (var name in searchResult)
+            getallusers.Fetch(input);
+
+            foreach (var name in SearchResult)
             {
                 Console.WriteLine(name);
             }
 
-            return searchResult;
+            return SearchResult;
            
 
             //Console.Write("\n(D)elete");

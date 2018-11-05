@@ -1,43 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using genomgång_Menushell.Domain;
 using MenuShell_inlämning.Domain;
 
-namespace genomgång_Menushell
+namespace MenuShell_inlämning
 {
     class Program
-    {
-        const string administrator = "Administrator";
-        const string receptionist = "Receptionist";
-        const string veterinarian = "Veterinarian";
+    {     
+        const string Administrator = "Administrator";
+        const string Receptionist = "Receptionist";
+        const string Veterinarian = "Veterinarian";
 
-        public static Dictionary<string, User> Users = new Dictionary<string, User>();
-        //{
-        //    {"admin", new User("admin", "8008135", administrator)},
-        //    {"jake", new User("user", "8008135", receptionist)},
-        //    {"john", new User("user","8008135", veterinarian)},
-        //    {"jane", new User("user","8008135", "")}
-        //};
-
-        static void Main(string[] args)
+        public static Dictionary<string, User> Users = new Dictionary<string, User>
         {
+            {"admin", new User("admin", "password", Administrator)},
+            {"jake", new User("user", "password", Receptionist)},
+            {"john", new User("user","password", Veterinarian)},
+            {"jane", new User("user","password", "")}
+        };
+
+        static void Main()
+        {
+            var getUser = new GetUser();
+            var saveUser = new SaveUser();
+            var deletUser = new DeleteUser();            
+                               
             logout:
 
-            bool notLoggedIn = true;            
-
-            var admin = new User("admin", "secret", "Administrator");
+            bool notLoggedIn = true;                       
 
             var search = new UserSearchView();
             var delete = new UserListView();           
 
-            User user = null;
-
-            Users.Add("admin", new User("admin", "8008135", administrator));
-            Users.Add("jake", new User("user", "8008135", receptionist));
-            Users.Add("john", new User("user", "8008135", veterinarian));
+            User user = null;            
 
             do
             {
@@ -76,7 +72,7 @@ namespace genomgång_Menushell
 
             Console.Clear();
 
-            if (user.Role == administrator)
+            if (user.Role == Administrator)
             {
                 Start:
 
@@ -96,20 +92,23 @@ namespace genomgång_Menushell
                         Console.Write("Password: ");
                         string password = Console.ReadLine();
 
-                        Console.WriteLine($"Role: 1. {administrator} 2. {receptionist} 3. {veterinarian} \n");
+                        Console.WriteLine($"Role: 1. {Administrator} 2. {Receptionist} 3. {Veterinarian} \n");
 
                         var answer = Console.ReadKey(true).Key;
 
                         switch (answer)
                         {
                             case ConsoleKey.D1:
-                                Users.Add(username, new User(username, password, administrator));
+                                saveUser.saveUser(username, password, Administrator);
+                                //Users.Add(username, new User(username, password, Administrator));
                                 break;
                             case ConsoleKey.D2:
-                                Users.Add(username, new User(username, password, receptionist));
+                                saveUser.saveUser(username, password, Receptionist);
+                                //Users.Add(username, new User(username, password, Receptionist));
                                 break;
                             case ConsoleKey.D3:
-                                Users.Add(username, new User(username, password, veterinarian));
+                                saveUser.saveUser(username, password, Veterinarian);
+                                //Users.Add(username, new User(username, password, Veterinarian));
                                 break;
                         }
 
@@ -123,85 +122,40 @@ namespace genomgång_Menushell
 
                         Console.Clear();
 
-                        var searchResult = search.Display(Users);
+                        Console.Write("Enter Username: ");
+                        string searchUserName = Console.ReadLine();
 
-                        delete.Display(searchResult);
+                        Console.Write("Enter Role: ");
+                        string searchRole = Console.ReadLine();
 
+                        getUser.Fetch(searchUserName);
 
-                        //    Console.WriteLine("Search by username:");
+                    //var searchResult = search.Display(Users);
 
-                        //    string input = Console.ReadLine();                       
-
-                        //    var searchResult = users.Keys.Where(key => key.Contains(input));
-
-                        //    Console.Clear();                       
-
-                        //    Console.WriteLine("Results:");
-
-                        //    foreach (var name in searchResult)
-                        //    {
-                        //         Console.WriteLine(name);
-                        //    }
-
-                        //    Console.Write("\n(D)elete");
-
-                        //    var delete = Console.ReadKey(true).Key;
-
-                        //    if (delete == ConsoleKey.D)
-                        //    {
-                        //        Console.Clear();
-
-                        //        foreach (var name in searchResult)
-                        //        {
-                        //            Console.WriteLine(name);
-                        //        }
-
-                        //        Console.Write("\nDelete: ");
-
-                        //        var deleteInput = Console.ReadLine();
-
-                        //        Console.Write("(Y)es (N)o ");
-
-                        //        var Yes = Console.ReadKey(true).Key;
-
-                        //        if (Yes == ConsoleKey.Y)
-                        //        {
-                        //            users.Remove(deleteInput);
-                        //        }                      
-                        //    }
-
-                        //users.ToList().ForEach(x => Console.WriteLine(x.Key));
-
-                        //Console.WriteLine("\nPress any key to return to previous menu.");                        
+                    //delete.Display(searchResult);
 
                         goto Start;
 
-                    //case ConsoleKey.D3:
+                    case ConsoleKey.D3:
 
-                    //    Console.Clear();
+                        Console.Clear();
 
-                    //    users.ToList().ForEach(x => Console.WriteLine(x.Key));
+                        Console.WriteLine("Enter Username: ");
+                        string deleteUserName = Console.ReadLine();
 
-                    //    Console.WriteLine("\nEnter name of the user you wish to delete.");
+                        Console.WriteLine("Enter role: ");
+                        string deleteRole = Console.ReadLine();
 
-                    //    users.Remove(Console.ReadLine());
+                        deletUser.deleteUser(deleteUserName, deleteRole);
 
-                    //    Console.Clear();
-
-                    //    users.ToList().ForEach(x => Console.WriteLine(x.Key));
-
-                    //    Console.WriteLine("\nPress any key to return to previous menu.");
-
-                    //    Console.ReadKey();
-
-                    //goto Start;
-
+                        goto Start;
+                   
                     case ConsoleKey.D4:
 
                         goto logout;
                 }
             }
-            else if (user.Role == receptionist)
+            else if (user.Role == Receptionist)
             {
                 ShowReceptionistAre();
 
@@ -216,11 +170,9 @@ namespace genomgång_Menushell
                     case ConsoleKey.D3:
                         Environment.Exit(0);
                         break;
-                    default:
-                        break;
                 }
             }
-            else if (user.Role == veterinarian)
+            else if (user.Role == Veterinarian)
             {
                 ShowVeterinarianArea();
 
@@ -234,8 +186,6 @@ namespace genomgång_Menushell
                     case ConsoleKey.D2:
                         Environment.Exit(0);
                         break;
-                    default:
-                        break;
                 }
             }
         }
@@ -245,7 +195,7 @@ namespace genomgång_Menushell
             //admin
             Console.WriteLine("1. Add user");
             Console.WriteLine("2. Search users");
-            //Console.WriteLine("3. Remove user");
+            Console.WriteLine("3. Remove user");
             Console.WriteLine("4. Exit");
         }
         static void ShowReceptionistAre()
